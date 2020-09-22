@@ -7,20 +7,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"></script>
   </head>
   <body>
-    <video playsinline autoploay></video>
-    <button>Take snapshot</button>
+    <video playsinline autoplay></video>
+    <button>Takeshot</button>
     <canvas></canvas>
-    <span></span>
-    <script>
-      video = document.querySelector('video');
-      canvas = document.querySelector('canvas');
-      button = document.querySelector('button');
-      span = document.querySelector('span');
+    <span></span>    
+     <script>
+    video = document.querySelector('video');
+    canvas = document.querySelector('canvas');
+    button = document.querySelector('button');
+    span = document.querySelector('span');
+
 
       canvas.width = 48;
       canvas.height = 48;
       canvas.style.filter = 'grayscale(1)';
       video.style.transform = 'scaleX(-1)';
+
       span = document.querySelector('span');
       span.style.fontSize = '48px';
 
@@ -34,26 +36,7 @@
         6: '😐' // neutral
       }
 
-      button.onclick = function() {
-        w = video.videoWidth;
-        h = video.videoHeight;
-        s = Math.min(w, h);
-        sx = (w-s)/2;
-        sy = (h-s)/2;
-
-        canvas.getContext('2d').drawImage(video, sx=sx, sy=sy, swidth=s,
-          sheight=s, x=0, y=0, width=48, height=48);
-
-        span.innerHTML = '⌛';
-        predict();
-    };
-
-      constraints = {
-        audio: false,
-        video: true
-      };
-
-      async function predict() {
+async function predict() {
         const model = await tf.loadLayersModel('./model/model.json');
 
         image = tf.browser.fromPixels(canvas);
@@ -70,15 +53,38 @@
         span.innerHTML = LABELS[i];
       }
 
-      function handleSuccess(stream) {
-        video.srcObject = stream;
-      }
 
-      function handleError(error) {
-        alert('navigator.MediaDevice.getUserMedia error: ' + error.message + error.name);
-      }
 
-      navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+
+    button.onclick = function() {
+<!-- 여기 -->
+	w = video.videoWidth;
+        h = video.videoHeight;
+        s = Math.min(w, h);
+        sx = (w-s)/2;
+        sy = (h-s)/2;
+	canvas.getContext('2d').drawImage(video, sx=sx, sy=sy, swidth=s,
+          sheight=s, x=0, y=0, width=48, height=48);
+	
+	span.innerHTML = '⌛';
+        predict();
+
+    };
+
+    constraints = {
+      audio: false,
+      video: true
+    };
+
+    function handleSuccess(stream) {
+      video.srcObject = stream;
+    }
+
+    function handleError(error) {
+      alert('navigator.MediaDevices.getUserMedia error: ' + error.message + error.name);
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
     </script>
   </body>
 </html>
